@@ -1,0 +1,2755 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Planifica tu Ruta, Protege tu Tiempo — Guía de Rutas UPC San Miguel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <!-- Librería ligera para generar código QR escaneable en el afiche -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js" defer></script>
+
+  <style>
+    :root {
+      --upc-red: #D91E2A;
+      --upc-red-dark: #B0141E;
+      --upc-red-soft: #FEF2F2;
+      --slate-900: #0F172A;
+      --slate-800: #1E293B;
+      --slate-700: #334155;
+      --slate-600: #475569;
+      --slate-500: #64748B;
+      --slate-300: #CBD5E1;
+      --slate-200: #E2E8F0;
+      --slate-100: #F1F5F9;
+      --slate-50: #F8FAFC;
+      --white: #FFFFFF;
+
+      /* Semáforo de tráfico */
+      --traffic-low: #10B981;
+      --traffic-low-bg: #ECFDF5;
+      --traffic-low-text: #065F46;
+      --traffic-mid: #F59E0B;
+      --traffic-mid-bg: #FFFBEB;
+      --traffic-mid-text: #92400E;
+      --traffic-high: #EF4444;
+      --traffic-high-bg: #FEF2F2;
+      --traffic-high-text: #991B1B;
+
+      /* Colores de ejes troncales */
+      --axis-ventanilla: #0891B2;
+      --axis-callao: #2563EB;
+      --axis-norte: #EA580C;
+      --axis-este: #7C3AED;
+      --axis-sur: #059669;
+
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+      --shadow-md: 0 10px 25px -5px rgba(15, 23, 42, 0.07), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+      --shadow-lg: 0 20px 35px -10px rgba(15, 23, 42, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--slate-50);
+      color: var(--slate-900);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* ================= TOP BAR ================= */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--slate-200);
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 68px;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--slate-900);
+    }
+
+    .brand-badge {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: var(--upc-red);
+      color: var(--white);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 0.95rem;
+      letter-spacing: -0.02em;
+      flex-shrink: 0;
+    }
+
+    .brand-text strong {
+      display: block;
+      font-size: 0.95rem;
+      font-weight: 800;
+      line-height: 1.15;
+    }
+
+    .brand-text span {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--slate-500);
+      font-weight: 500;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--slate-700);
+      font-size: 0.875rem;
+      font-weight: 600;
+      transition: color 0.15s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--upc-red);
+    }
+
+    .campus-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--slate-100);
+      border: 1px solid var(--slate-200);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: var(--slate-700);
+      white-space: nowrap;
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--traffic-low);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+    }
+
+    /* ================= HERO ================= */
+    .hero {
+      background: var(--white);
+      border-bottom: 1px solid var(--slate-200);
+      padding: 48px 0 56px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--upc-red) 0%, var(--upc-red) 55%, var(--slate-900) 55%, var(--slate-900) 100%);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.12fr 0.88fr;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--upc-red-soft);
+      color: var(--upc-red);
+      border: 1px solid rgba(217, 30, 42, 0.2);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 16px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 3.8vw, 3rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      color: var(--slate-900);
+      margin-bottom: 16px;
+    }
+
+    .hero h1 span {
+      color: var(--upc-red);
+    }
+
+    .hero-subtitle {
+      font-size: 1.08rem;
+      color: var(--slate-600);
+      max-width: 56ch;
+      margin-bottom: 28px;
+    }
+
+    /* Selector Rápido en Hero */
+    .quick-selector-box {
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .quick-selector-box label {
+      display: block;
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--slate-800);
+      margin-bottom: 10px;
+    }
+
+    .quick-selector-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .select-control {
+      flex: 1;
+      min-width: 230px;
+      height: 46px;
+      padding: 0 14px;
+      border: 1.5px solid var(--slate-300);
+      border-radius: var(--radius-sm);
+      background: var(--white);
+      color: var(--slate-900);
+      font-family: inherit;
+      font-size: 0.94rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color 0.15s ease;
+    }
+
+    .select-control:focus {
+      outline: none;
+      border-color: var(--upc-red);
+      box-shadow: 0 0 0 3px rgba(217, 30, 42, 0.12);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      height: 46px;
+      padding: 0 20px;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all 0.16s ease;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--upc-red);
+      color: var(--white);
+    }
+
+    .btn-primary:hover {
+      background: var(--upc-red-dark);
+      transform: translateY(-1px);
+    }
+
+    .btn-dark {
+      background: var(--slate-900);
+      color: var(--white);
+    }
+
+    .btn-dark:hover {
+      background: var(--slate-800);
+    }
+
+    .btn-outline {
+      background: var(--white);
+      color: var(--slate-800);
+      border: 1.5px solid var(--slate-300);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--slate-900);
+      background: var(--slate-50);
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      margin-top: 16px;
+      font-size: 0.82rem;
+      color: var(--slate-500);
+      font-weight: 500;
+    }
+
+    .hero-meta span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Mapa Esquemático de Troncales (Inspiración Metropolitano) */
+    .schematic-card {
+      background: var(--slate-900);
+      color: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--slate-800);
+    }
+
+    .schematic-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+    }
+
+    .schematic-header h2 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--slate-200);
+    }
+
+    .schematic-tag {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 6px;
+      background: rgba(217, 30, 42, 0.25);
+      color: #FCA5A5;
+      border: 1px solid rgba(217, 30, 42, 0.45);
+    }
+
+    .trunk-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .trunk-node {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-align: left;
+      width: 100%;
+      color: inherit;
+      font-family: inherit;
+    }
+
+    .trunk-node:hover,
+    .trunk-node.active {
+      background: rgba(255, 255, 255, 0.13);
+      border-color: rgba(255, 255, 255, 0.28);
+      transform: translateX(3px);
+    }
+
+    .trunk-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .trunk-code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 4px 7px;
+      border-radius: 6px;
+      color: var(--white);
+      min-width: 44px;
+      text-align: center;
+    }
+
+    .trunk-info strong {
+      display: block;
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: var(--white);
+    }
+
+    .trunk-info small {
+      display: block;
+      font-size: 0.74rem;
+      color: #94A3B8;
+    }
+
+    .trunk-time {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #E2E8F0;
+      white-space: nowrap;
+    }
+
+    .schematic-destination {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: var(--upc-red);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .schematic-destination strong {
+      display: block;
+      font-size: 0.88rem;
+    }
+
+    .schematic-destination span {
+      display: block;
+      font-size: 0.74rem;
+      opacity: 0.92;
+    }
+
+    /* ================= SECTIONS GENERAL ================= */
+    .section {
+      padding: 56px 0;
+    }
+
+    .section-header {
+      margin-bottom: 28px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .section-kicker {
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--upc-red);
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .section-title {
+      font-size: clamp(1.5rem, 2.5vw, 2rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--slate-900);
+    }
+
+    .section-desc {
+      color: var(--slate-600);
+      font-size: 0.96rem;
+      max-width: 64ch;
+      margin-top: 6px;
+    }
+
+    /* ================= ZONAS DE ORIGEN (TABS ESTILO CORREDOR) ================= */
+    .zone-tabs {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .zone-tab {
+      background: var(--white);
+      border: 1.5px solid var(--slate-200);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.16s ease;
+      font-family: inherit;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .zone-tab:hover {
+      border-color: var(--slate-400);
+      transform: translateY(-2px);
+    }
+
+    .zone-tab.active {
+      border-color: var(--upc-red);
+      background: var(--white);
+      box-shadow: 0 0 0 3px rgba(217, 30, 42, 0.12), var(--shadow-md);
+    }
+
+    .zone-tab-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .axis-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--slate-600);
+    }
+
+    .axis-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .zone-tab-title {
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: var(--slate-900);
+      line-height: 1.25;
+    }
+
+    .zone-tab-sub {
+      font-size: 0.76rem;
+      color: var(--slate-500);
+      line-height: 1.3;
+    }
+
+    /* Banner resumen de zona activa */
+    .zone-banner {
+      background: var(--white);
+      border: 1px solid var(--slate-200);
+      border-left: 5px solid var(--upc-red);
+      border-radius: var(--radius-md);
+      padding: 18px 22px;
+      margin-bottom: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .zone-banner-info h3 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--slate-900);
+      margin-bottom: 4px;
+    }
+
+    .zone-banner-info p {
+      font-size: 0.9rem;
+      color: var(--slate-600);
+    }
+
+    .zone-banner-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .meta-chip {
+      background: var(--slate-100);
+      border: 1px solid var(--slate-200);
+      padding: 7px 12px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--slate-700);
+    }
+
+    /* ================= COMPARATIVA DE RUTAS ================= */
+    .routes-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 22px;
+    }
+
+    .route-card {
+      background: var(--white);
+      border: 1.5px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.16s ease;
+    }
+
+    .route-card.primary-route {
+      border-top: 5px solid var(--upc-red);
+    }
+
+    .route-card.alt-route {
+      border-top: 5px solid var(--slate-700);
+    }
+
+    .route-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .route-type-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.76rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 5px 10px;
+      border-radius: 6px;
+    }
+
+    .route-type-badge.fast {
+      background: var(--upc-red-soft);
+      color: var(--upc-red);
+    }
+
+    .route-type-badge.alt {
+      background: var(--slate-100);
+      color: var(--slate-700);
+    }
+
+    .congestion-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 5px 11px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .congestion-baja {
+      background: var(--traffic-low-bg);
+      color: var(--traffic-low-text);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .congestion-media {
+      background: var(--traffic-mid-bg);
+      color: var(--traffic-mid-text);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+    }
+
+    .congestion-alta {
+      background: var(--traffic-high-bg);
+      color: var(--traffic-high-text);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .route-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--slate-900);
+      margin-bottom: 10px;
+    }
+
+    .lines-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .line-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: 6px;
+      background: var(--slate-900);
+      color: var(--white);
+    }
+
+    .line-tag.red {
+      background: var(--upc-red);
+    }
+
+    .line-tag.outline {
+      background: var(--slate-100);
+      color: var(--slate-800);
+      border: 1px solid var(--slate-300);
+    }
+
+    /* Línea esquemática de paraderos dentro de tarjeta */
+    .stops-timeline {
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-bottom: 18px;
+    }
+
+    .stop-item {
+      display: flex;
+      gap: 12px;
+      position: relative;
+      padding-bottom: 14px;
+    }
+
+    .stop-item:last-child {
+      padding-bottom: 0;
+    }
+
+    .stop-marker {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-shrink: 0;
+      width: 18px;
+    }
+
+    .stop-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--white);
+      border: 3px solid var(--slate-700);
+      margin-top: 4px;
+      z-index: 2;
+    }
+
+    .stop-item.end .stop-dot {
+      border-color: var(--upc-red);
+      background: var(--upc-red);
+    }
+
+    .stop-item.transfer .stop-dot {
+      border-color: var(--traffic-mid);
+    }
+
+    .stop-line {
+      width: 2px;
+      flex: 1;
+      background: var(--slate-300);
+      margin-top: 2px;
+    }
+
+    .stop-item:last-child .stop-line {
+      display: none;
+    }
+
+    .stop-content strong {
+      display: block;
+      font-size: 0.86rem;
+      color: var(--slate-900);
+    }
+
+    .stop-content span {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--slate-600);
+    }
+
+    /* Métricas de tiempo */
+    .route-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .metric-box {
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+
+    .metric-box small {
+      display: block;
+      font-size: 0.71rem;
+      font-weight: 600;
+      color: var(--slate-500);
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+
+    .metric-box strong {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.94rem;
+      font-weight: 700;
+      color: var(--slate-900);
+    }
+
+    .route-note {
+      font-size: 0.84rem;
+      color: var(--slate-600);
+      background: #F8FAFC;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border-left: 3px solid var(--slate-300);
+      margin-bottom: 16px;
+    }
+
+    /* ================= CALCULADORA HORA REAL DE SALIDA ================= */
+    .calculator-section {
+      background: var(--white);
+      border-top: 1px solid var(--slate-200);
+      border-bottom: 1px solid var(--slate-200);
+    }
+
+    .calc-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      align-items: stretch;
+    }
+
+    .calc-panel {
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      padding: 26px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--slate-800);
+      margin-bottom: 8px;
+    }
+
+    .form-control {
+      width: 100%;
+      height: 44px;
+      padding: 0 12px;
+      border: 1.5px solid var(--slate-300);
+      border-radius: var(--radius-sm);
+      background: var(--white);
+      font-family: inherit;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--slate-900);
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--upc-red);
+    }
+
+    .chip-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .time-chip {
+      padding: 6px 11px;
+      border-radius: 6px;
+      border: 1px solid var(--slate-300);
+      background: var(--white);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--slate-700);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .time-chip:hover,
+    .time-chip.active {
+      background: var(--slate-900);
+      color: var(--white);
+      border-color: var(--slate-900);
+    }
+
+    .radio-pills {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .radio-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--slate-300);
+      background: var(--white);
+      cursor: pointer;
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--slate-800);
+    }
+
+    .radio-pill input {
+      accent-color: var(--upc-red);
+    }
+
+    /* Tablero Resultado (Estilo Pantalla Metropolitano) */
+    .calc-board {
+      background: var(--slate-900);
+      color: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .calc-board::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: var(--upc-red);
+    }
+
+    .board-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .board-label {
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #94A3B8;
+    }
+
+    .board-status {
+      font-size: 0.76rem;
+      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: 999px;
+    }
+
+    .departure-clock {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(2.4rem, 4.5vw, 3.4rem);
+      font-weight: 800;
+      line-height: 1;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+
+    .departure-sub {
+      font-size: 0.94rem;
+      color: #CBD5E1;
+      margin-bottom: 24px;
+    }
+
+    .breakdown-bar {
+      display: flex;
+      height: 12px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.1);
+      margin-bottom: 14px;
+    }
+
+    .bar-seg-base { background: #38BDF8; }
+    .bar-seg-margin { background: #F59E0B; }
+    .bar-seg-campus { background: #10B981; }
+
+    .breakdown-legend {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    .legend-item {
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    .legend-item small {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      color: #94A3B8;
+      margin-bottom: 3px;
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .legend-item strong {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.92rem;
+      color: var(--white);
+    }
+
+    .board-tip {
+      background: rgba(255, 255, 255, 0.08);
+      border-left: 3px solid var(--upc-red);
+      padding: 12px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: #E2E8F0;
+    }
+
+    /* ================= CONSEJOS DE ESTUDIANTES UPC ================= */
+    .tips-layout {
+      display: grid;
+      grid-template-columns: 1.35fr 0.65fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .tip-card {
+      background: var(--white);
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .tip-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .tip-category {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 4px 8px;
+      border-radius: 6px;
+      background: var(--upc-red-soft);
+      color: var(--upc-red);
+    }
+
+    .tip-zone-tag {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--slate-500);
+    }
+
+    .tip-text {
+      font-size: 0.9rem;
+      color: var(--slate-700);
+      line-height: 1.5;
+    }
+
+    .tip-author {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--slate-100);
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--slate-900);
+      color: var(--white);
+      font-size: 0.76rem;
+      font-weight: 700;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .tip-author strong {
+      display: block;
+      font-size: 0.82rem;
+      color: var(--slate-900);
+    }
+
+    .tip-author span {
+      display: block;
+      font-size: 0.74rem;
+      color: var(--slate-500);
+    }
+
+    .tip-form-card {
+      background: var(--white);
+      border: 1.5px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      box-shadow: var(--shadow-md);
+      position: sticky;
+      top: 86px;
+    }
+
+    .tip-form-card h3 {
+      font-size: 1.08rem;
+      font-weight: 800;
+      color: var(--slate-900);
+      margin-bottom: 6px;
+    }
+
+    .tip-form-card p {
+      font-size: 0.84rem;
+      color: var(--slate-600);
+      margin-bottom: 16px;
+    }
+
+    textarea.form-control {
+      height: 92px;
+      padding: 10px 12px;
+      resize: vertical;
+      line-height: 1.45;
+    }
+
+    .toast-msg {
+      display: none;
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: var(--traffic-low-bg);
+      color: var(--traffic-low-text);
+      font-size: 0.82rem;
+      font-weight: 600;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+
+    .toast-msg.show {
+      display: block;
+    }
+
+    /* ================= FOOTER & AFICHE QR ================= */
+    .footer {
+      background: var(--slate-900);
+      color: var(--slate-200);
+      padding: 52px 0 36px;
+      border-top: 5px solid var(--upc-red);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 32px;
+      align-items: center;
+      padding-bottom: 32px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .footer-project h3 {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 10px;
+    }
+
+    .footer-project p {
+      font-size: 0.92rem;
+      color: #CBD5E1;
+      max-width: 60ch;
+      margin-bottom: 16px;
+    }
+
+    .project-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .project-badge {
+      font-size: 0.76rem;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      color: var(--white);
+    }
+
+    /* Tarjeta Afiche QR */
+    .poster-box {
+      background: var(--white);
+      color: var(--slate-900);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .qr-holder {
+      width: 96px;
+      height: 96px;
+      border: 1px solid var(--slate-200);
+      border-radius: 8px;
+      padding: 6px;
+      background: var(--white);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .qr-holder img,
+    .qr-holder svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .poster-info h4 {
+      font-size: 0.95rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .poster-info p {
+      font-size: 0.78rem;
+      color: var(--slate-600);
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+
+    .poster-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .btn-sm {
+      height: 36px;
+      padding: 0 12px;
+      font-size: 0.78rem;
+    }
+
+    .footer-bottom {
+      padding-top: 22px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 0.8rem;
+      color: #94A3B8;
+    }
+
+    /* Modal Vista Previa Afiche */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.72);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 100;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      max-width: 480px;
+      width: 100%;
+      padding: 24px;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      max-height: 92vh;
+      overflow-y: auto;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid var(--slate-200);
+      background: var(--slate-50);
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .poster-preview-sheet {
+      border: 2px solid var(--slate-900);
+      border-radius: 12px;
+      overflow: hidden;
+      margin: 14px 0 18px;
+      background: var(--white);
+    }
+
+    .poster-sheet-top {
+      background: var(--upc-red);
+      color: var(--white);
+      padding: 18px;
+    }
+
+    .poster-sheet-top small {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      opacity: 0.92;
+      margin-bottom: 4px;
+    }
+
+    .poster-sheet-top h4 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      line-height: 1.15;
+    }
+
+    .poster-sheet-body {
+      padding: 16px 18px;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .poster-sheet-qr {
+      width: 112px;
+      height: 112px;
+      flex-shrink: 0;
+      border: 1px solid var(--slate-200);
+      padding: 6px;
+      border-radius: 8px;
+    }
+
+    .poster-sheet-qr img,
+    .poster-sheet-qr svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .poster-sheet-lines {
+      font-size: 0.78rem;
+      color: var(--slate-700);
+    }
+
+    .poster-sheet-lines li {
+      list-style: none;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+    }
+
+    .poster-sheet-foot {
+      background: var(--slate-900);
+      color: var(--white);
+      padding: 10px 18px;
+      font-size: 0.72rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* ================= RESPONSIVE ================= */
+    @media (max-width: 1024px) {
+      .hero-grid,
+      .calc-wrapper,
+      .tips-layout,
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .zone-tabs {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .tip-form-card {
+        position: static;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+
+      .routes-grid,
+      .tips-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .zone-tabs {
+        grid-template-columns: 1fr;
+      }
+
+      .route-metrics,
+      .breakdown-legend {
+        grid-template-columns: 1fr;
+      }
+
+      .radio-pills {
+        grid-template-columns: 1fr;
+      }
+
+      .poster-box {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .poster-actions {
+        justify-content: center;
+      }
+    }
+
+    @media print {
+      .topbar, .tip-form-card, .btn, .quick-selector-box {
+        display: none !important;
+      }
+      body {
+        background: #fff;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BARRA DE NAVEGACIÓN -->
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a href="#inicio" class="brand">
+        <div class="brand-badge">UPC</div>
+        <div class="brand-text">
+          <strong>Guía de Rutas San Miguel</strong>
+          <span>Planifica tu Ruta, Protege tu Tiempo</span>
+        </div>
+      </a>
+
+      <nav class="nav-links" aria-label="Navegación principal">
+        <a href="#zonas">Zonas y Rutas</a>
+        <a href="#calculadora">Hora de Salida</a>
+        <a href="#consejos">Consejos UPC</a>
+        <a href="#afiche-qr">Afiche QR</a>
+      </nav>
+
+      <div class="campus-pill">
+        <span class="pulse-dot" aria-hidden="true"></span>
+        <span>Destino: Av. La Marina 2810</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- 1. CABECERA (HERO) -->
+  <section id="inicio" class="hero">
+    <div class="container hero-grid">
+      <div>
+        <div class="eyebrow">
+          <span>Proyecto de Sostenibilidad · UPC San Miguel</span>
+        </div>
+        <h1>Planifica tu Ruta, <span>Protege tu Tiempo</span></h1>
+        <p class="hero-subtitle">
+          Guía de rutas rápidas y directas hacia la UPC Sede San Miguel para estudiantes de zonas alejadas y de toda Lima.
+        </p>
+
+        <div class="quick-selector-box">
+          <label for="heroZoneSelect">¿Desde qué zona viajas hacia San Miguel?</label>
+          <div class="quick-selector-row">
+            <select id="heroZoneSelect" class="select-control">
+              <option value="ventanilla">Ventanilla / Mi Perú / Pachacútec</option>
+              <option value="callao">Callao / Bellavista / La Perla</option>
+              <option value="norte">Lima Norte (Los Olivos / SMP / Independencia)</option>
+              <option value="este">Lima Este (SJL / Ate / Santa Anita)</option>
+              <option value="sur">Lima Sur (VMT / VES / Chorrillos)</option>
+            </select>
+            <button type="button" id="heroGoBtn" class="btn btn-primary">
+              Ver ruta recomendada →
+            </button>
+          </div>
+          <div class="hero-meta">
+            <span>📍 Bajada principal: Paradero Rafael Escardó / Hiraoka</span>
+            <span>🪪 Medio pasaje Corredor Rojo: S/ 1.21</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Esquema visual estilo sistema troncal -->
+      <aside class="schematic-card" aria-label="Esquema troncal de corredores hacia UPC San Miguel">
+        <div class="schematic-header">
+          <h2>Red Troncal de Accesos</h2>
+          <span class="schematic-tag">5 EJES ACTIVOS</span>
+        </div>
+        <div class="trunk-list" id="schematicList">
+          <!-- Se renderiza dinámicamente desde JS -->
+        </div>
+        <div class="schematic-destination">
+          <div>
+            <strong>LLEGADA: UPC Campus San Miguel</strong>
+            <span>Av. La Marina 2810 esq. Av. Rafael Escardó (Frente a Hiraoka)</span>
+          </div>
+          <span class="mono" style="font-weight: 800; font-size: 0.85rem;">1 min a pie</span>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- 2 y 3. ZONAS DE ORIGEN Y COMPARATIVA DE RUTAS -->
+  <section id="zonas" class="section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <span class="section-kicker">Corredores y Troncales</span>
+          <h2 class="section-title">Elige tu Zona de Origen y Compara Rutas</h2>
+          <p class="section-desc">
+            Compara la ruta más rápida o directa frente a una alternativa estratégica con conexión cuando hay congestión en hora punta.
+          </p>
+        </div>
+      </div>
+
+      <!-- Pestañas de zonas -->
+      <div class="zone-tabs" role="tablist" aria-label="Zonas de origen" id="zoneTabs">
+        <!-- Renderizado por JS -->
+      </div>
+
+      <!-- Resumen de la zona seleccionada -->
+      <div class="zone-banner" id="zoneBanner">
+        <!-- Renderizado por JS -->
+      </div>
+
+      <!-- Tarjetas comparativas -->
+      <div class="routes-grid" id="routesComparison" role="tabpanel">
+        <!-- Renderizado por JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. CALCULADORA DE "HORA REAL DE SALIDA" -->
+  <section id="calculadora" class="section calculator-section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <span class="section-kicker">Planificador Inteligente</span>
+          <h2 class="section-title">Calculadora de "Hora Real de Salida"</h2>
+          <p class="section-desc">
+            Evita llegar corriendo o perder evaluaciones. Calcula a qué hora salir sumando traslado, espera en paradero y margen por tráfico.
+          </p>
+        </div>
+      </div>
+
+      <div class="calc-wrapper">
+        <div class="calc-panel">
+          <div class="form-group">
+            <label for="calcZone">1. Zona de origen</label>
+            <select id="calcZone" class="form-control">
+              <option value="ventanilla">Ventanilla / Mi Perú / Pachacútec</option>
+              <option value="callao">Callao / Bellavista / La Perla</option>
+              <option value="norte">Lima Norte (Los Olivos / SMP / Independencia)</option>
+              <option value="este">Lima Este (SJL / Ate / Santa Anita)</option>
+              <option value="sur">Lima Sur (VMT / VES / Chorrillos)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>2. Opción de ruta</label>
+            <div class="radio-pills">
+              <label class="radio-pill">
+                <input type="radio" name="calcRouteType" value="direct" checked />
+                <span>Ruta Rápida / Directa</span>
+              </label>
+              <label class="radio-pill">
+                <input type="radio" name="calcRouteType" value="alt" />
+                <span>Ruta Alternativa</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="calcTime">3. Hora de inicio de tu clase</label>
+            <input type="time" id="calcTime" class="form-control" value="08:00" />
+            <div class="chip-group" aria-label="Horarios frecuentes de clase">
+              <button type="button" class="time-chip" data-time="07:00">07:00</button>
+              <button type="button" class="time-chip active" data-time="08:00">08:00</button>
+              <button type="button" class="time-chip" data-time="09:00">09:00</button>
+              <button type="button" class="time-chip" data-time="11:00">11:00</button>
+              <button type="button" class="time-chip" data-time="14:00">14:00</button>
+              <button type="button" class="time-chip" data-time="18:00">18:00</button>
+              <button type="button" class="time-chip" data-time="19:00">19:00</button>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label for="calcCondition">4. Tipo de jornada</label>
+            <select id="calcCondition" class="form-control">
+              <option value="0">Día regular de clases</option>
+              <option value="10">Lunes temprano o día con garúa (+10 min)</option>
+              <option value="15">Día de práctica calificada / examen (+15 min)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Resultado estilo pantalla troncal -->
+        <div class="calc-board" aria-live="polite">
+          <div>
+            <div class="board-top">
+              <span class="board-label">Hora sugerida para salir de casa</span>
+              <span class="board-status" id="boardStatusBadge">HORA PUNTA</span>
+            </div>
+
+            <div class="departure-clock" id="departureClock">06:15 a. m.</div>
+            <p class="departure-sub" id="departureSummary">
+              Para llegar a las 07:50 a. m. al campus (clase 08:00 a. m.).
+            </p>
+
+            <div class="breakdown-bar" aria-hidden="true">
+              <div class="bar-seg-base" id="barBase" style="width: 60%;"></div>
+              <div class="bar-seg-margin" id="barMargin" style="width: 28%;"></div>
+              <div class="bar-seg-campus" id="barCampus" style="width: 12%;"></div>
+            </div>
+
+            <div class="breakdown-legend">
+              <div class="legend-item">
+                <small><span class="legend-dot" style="background:#38BDF8;"></span> Viaje base</small>
+                <strong id="legendBase">60 min</strong>
+              </div>
+              <div class="legend-item">
+                <small><span class="legend-dot" style="background:#F59E0B;"></span> Margen tráfico</small>
+                <strong id="legendMargin">25 min</strong>
+              </div>
+              <div class="legend-item">
+                <small><span class="legend-dot" style="background:#10B981;"></span> Ingreso aula</small>
+                <strong id="legendCampus">10 min</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="board-tip" id="boardTip">
+            Tip de ruta: ...
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. CONSEJOS DE ESTUDIANTES UPC -->
+  <section id="consejos" class="section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <span class="section-kicker">Comunidad Estudiantil</span>
+          <h2 class="section-title">Consejos de Estudiantes UPC</h2>
+          <p class="section-desc">
+            Recomendaciones prácticas de alumnos que viajan diariamente a San Miguel: mejores paraderos, horarios con menor carga y trucos para días de examen.
+          </p>
+        </div>
+      </div>
+
+      <div class="tips-layout">
+        <div class="tips-grid" id="tipsGrid">
+          <!-- Renderizado por JS -->
+        </div>
+
+        <aside class="tip-form-card">
+          <h3>Comparte tu consejo de ruta</h3>
+          <p>¿Conoces un paradero más rápido o un bus que evita el tráfico? Ayuda a otros cachimbos y compañeros.</p>
+          <form id="tipForm">
+            <div class="form-group">
+              <label for="tipName">Tu nombre y carrera / ciclo</label>
+              <input type="text" id="tipName" class="form-control" placeholder="Ej. Camila R. · Ing. Industrial (6° ciclo)" required maxlength="55" />
+            </div>
+
+            <div class="form-group">
+              <label for="tipZone">Zona de origen</label>
+              <select id="tipZone" class="form-control">
+                <option value="Ventanilla / Pachacútec">Ventanilla / Mi Perú / Pachacútec</option>
+                <option value="Callao / La Perla">Callao / Bellavista / La Perla</option>
+                <option value="Lima Norte">Lima Norte</option>
+                <option value="Lima Este">Lima Este</option>
+                <option value="Lima Sur">Lima Sur</option>
+                <option value="Campus San Miguel">General / Campus San Miguel</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="tipCategory">Tipo de consejo</label>
+              <select id="tipCategory" class="form-control">
+                <option value="Paradero Clave">Paradero Clave</option>
+                <option value="Día de Examen">Día de Examen</option>
+                <option value="Horario Menos Cargado">Horario Menos Cargado</option>
+                <option value="Ahorro / Conexión">Ahorro / Conexión</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="tipContent">Tu recomendación práctica</label>
+              <textarea id="tipContent" class="form-control" placeholder="Ej. Si bajas en Faucett con La Marina en hora punta, camina al paradero del Corredor 201 y avanzas más rápido que esperando micro lleno." required maxlength="220"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%;">
+              Publicar consejo en la guía
+            </button>
+
+            <div id="tipToast" class="toast-msg" role="status">
+              ¡Gracias! Tu consejo se ha añadido a la guía estudiantil.
+            </div>
+          </form>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. PIE DE PÁGINA (FOOTER) Y AFICHE CON QR -->
+  <footer id="afiche-qr" class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-project">
+          <h3>Proyecto de Sostenibilidad · UPC Sede San Miguel</h3>
+          <p>
+            Esta plataforma forma parte del proyecto de sostenibilidad del curso <strong>Aprendizaje Estratégico y Liderazgo (UPC – Sede San Miguel)</strong>, orientado a reducir tardanzas, disminuir el estrés del traslado diario y mejorar el rendimiento académico de estudiantes que viajan desde zonas periféricas y toda Lima.
+          </p>
+          <div class="project-badges">
+            <span class="project-badge">ODS 11 · Movilidad Sostenible</span>
+            <span class="project-badge">Bienestar Estudiantil UPC</span>
+            <span class="project-badge">Sede San Miguel · Av. La Marina 2810</span>
+          </div>
+        </div>
+
+        <div class="poster-box">
+          <div class="qr-holder" id="qrMiniHolder" aria-label="Código QR de la guía de rutas"></div>
+          <div class="poster-info">
+            <h4>Afiche de Campaña con QR</h4>
+            <p>Compártelo en murales del campus, grupos de WhatsApp o delegados de aula.</p>
+            <div class="poster-actions">
+              <button type="button" id="openPosterModalBtn" class="btn btn-dark btn-sm">Ver afiche</button>
+              <button type="button" id="downloadPosterBtn" class="btn btn-primary btn-sm">Descargar PNG</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© 2026 Planifica tu Ruta, Protege tu Tiempo — Guía referencial creada por estudiantes UPC San Miguel.</span>
+        <span>Los tiempos pueden variar según obras viales y disposición de ATU.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- MODAL PREVIEW DEL AFICHE -->
+  <div class="modal-backdrop" id="posterModal" role="dialog" aria-modal="true" aria-labelledby="posterModalTitle">
+    <div class="modal-card">
+      <button type="button" class="modal-close" id="closePosterModalBtn" aria-label="Cerrar vista previa">✕</button>
+      <h3 id="posterModalTitle" style="font-size: 1.05rem; font-weight: 800;">Vista Previa del Afiche</h3>
+      <p style="font-size: 0.84rem; color: var(--slate-600); margin-top: 4px;">
+        Listo para imprimir o compartir en redes estudiantiles.
+      </p>
+
+      <div class="poster-preview-sheet">
+        <div class="poster-sheet-top">
+          <small>Aprendizaje Estratégico y Liderazgo · UPC San Miguel</small>
+          <h4>Planifica tu Ruta,<br />Protege tu Tiempo</h4>
+        </div>
+        <div class="poster-sheet-body">
+          <div class="poster-sheet-qr" id="qrModalHolder"></div>
+          <ul class="poster-sheet-lines">
+            <li><span class="axis-dot" style="background: var(--axis-ventanilla);"></span> Ventanilla / Mi Perú</li>
+            <li><span class="axis-dot" style="background: var(--axis-callao);"></span> Callao / La Perla</li>
+            <li><span class="axis-dot" style="background: var(--axis-norte);"></span> Lima Norte (Universitaria)</li>
+            <li><span class="axis-dot" style="background: var(--axis-este);"></span> Lima Este (L1 + Corredor)</li>
+            <li><span class="axis-dot" style="background: var(--axis-sur);"></span> Lima Sur (Vía Expresa)</li>
+          </ul>
+        </div>
+        <div class="poster-sheet-foot">
+          <span>Escanea y calcula tu hora de salida</span>
+          <strong>Paradero Rafael Escardó</strong>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <button type="button" id="modalDownloadBtn" class="btn btn-primary" style="flex: 1;">Descargar Afiche (PNG)</button>
+        <button type="button" id="modalPrintBtn" class="btn btn-outline">Imprimir</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CANVAS OCULTO PARA GENERAR EL AFICHE PNG -->
+  <canvas id="posterCanvas" width="1080" height="1520" style="display: none;"></canvas>
+
+  <script>
+    // ================= DATOS DE RUTAS POR ZONA =================
+    const ZONES_DATA = {
+      ventanilla: {
+        id: "ventanilla",
+        code: "EJE 01",
+        color: "#0891B2",
+        shortName: "Ventanilla / Mi Perú",
+        fullName: "Ventanilla / Mi Perú / Pachacútec",
+        axisName: "Eje Gambetta – Faucett – La Marina",
+        summary: "El cuello de botella principal está en Av. Néstor Gambetta (óvalo 200 Millas / Márquez) y Av. Faucett rumbo al aeropuerto. Salir con anticipación evita quedar atrapado en el tráfico pesado.",
+        fareTip: "Tarifa directa S/ 2.50–3.50 | Conexión Corredor S/ 1.21 (Univ.)",
+        peakAlert: "Hora punta crítica: 06:15 – 08:30 a. m.",
+        schematicTime: "65–90 min",
+        direct: {
+          title: "Bus directo por Gambetta – Faucett – La Marina",
+          lines: [
+            { label: "Línea 1442 (La P)", type: "red" },
+            { label: "Ruta 1163", type: "dark" },
+            { label: "Buses Faucett – Marina", type: "outline" }
+          ],
+          stops: [
+            { title: "Embarque: Paradero Teléfono / Metro Ventanilla / Pachacútec", desc: "Toma unidades con letrero 'Faucett – La Marina – Escardó'.", kind: "start" },
+            { title: "Tramo troncal: Av. Néstor Gambetta → Av. Elmer Faucett", desc: "Cruce por Márquez, Aeropuerto y Av. Venezuela.", kind: "mid" },
+            { title: "Bajada: Av. La Marina con Av. Rafael Escardó (Hiraoka)", desc: "Cruce peatonal directo frente a la puerta de UPC San Miguel.", kind: "end" }
+          ],
+          timeRange: "65–90 min",
+          baseMinutes: 70,
+          marginPeak: 25,
+          marginValley: 10,
+          fare: "S/ 3.00 aprox.",
+          congestion: "Alta",
+          congestionClass: "congestion-alta",
+          note: "La Ruta 1442 (Pachacútec–La Marina) te deja en la misma Av. La Marina; si tomas un bus que dobla antes, verifica que llegue hasta Escardó."
+        },
+        alt: {
+          title: "Bus hasta Faucett + Corredor Rojo (201 / 204)",
+          lines: [
+            { label: "Bus Gambetta / Faucett", type: "dark" },
+            { label: "Corredor Rojo 201", type: "red" },
+            { label: "Corredor Rojo 204", type: "red" }
+          ],
+          stops: [
+            { title: "Embarque: Ventanilla / Mi Perú hacia Av. Faucett", desc: "Aborda cualquier bus rápido que baje por toda la Av. Faucett.", kind: "start" },
+            { title: "Conexión: Cruce Av. Faucett con Av. La Marina (Paradero Honda / Faucett)", desc: "Baja en La Marina y toma el Corredor Rojo 201 o 204 (pasa cada 4–6 min).", kind: "transfer" },
+            { title: "Bajada: Paradero Rafael Escardó (UPC San Miguel)", desc: "Solo 2 paradas desde Faucett con tarjeta Lima Pass / ATU.", kind: "end" }
+          ],
+          timeRange: "60–80 min",
+          baseMinutes: 65,
+          marginPeak: 20,
+          marginValley: 10,
+          fare: "S/ 2.50 + S/ 1.21*",
+          congestion: "Media",
+          congestionClass: "congestion-media",
+          note: "Ideal cuando los buses directos de Ventanilla pasan llenos en paradero Teléfono: avanzas por Faucett y conectas en 5 minutos con Corredor Rojo."
+        }
+      },
+
+      callao: {
+        id: "callao",
+        code: "EJE 02",
+        color: "#2563EB",
+        shortName: "Callao / La Perla",
+        fullName: "Callao / Bellavista / La Perla",
+        axisName: "Eje Faucett / Venezuela – La Marina",
+        summary: "Es la zona más cercana y con mejor frecuencia hacia el campus. El Corredor Rojo 201 inicia en Óvalo La Perla, por lo que sueles encontrar asiento temprano.",
+        fareTip: "Corredor Rojo: S/ 1.21 con carné universitario",
+        peakAlert: "Carga moderada entre 07:15 – 08:30 a. m.",
+        schematicTime: "20–35 min",
+        direct: {
+          title: "Corredor Rojo 201 directo desde Óvalo La Perla",
+          lines: [
+            { label: "Corredor Rojo 201", type: "red" },
+            { label: "Ruta 1275 (ex CR71)", type: "dark" }
+          ],
+          stops: [
+            { title: "Embarque: Calle 66 / Av. Venezuela / Óvalo La Perla", desc: "Paradero inicial del Corredor Rojo 201 (mayor disponibilidad de asientos).", kind: "start" },
+            { title: "Tramo troncal: Av. La Marina (Bomberos → Base Naval → Insurgentes)", desc: "Circulación continua por vía exclusiva de paraderos formales.", kind: "mid" },
+            { title: "Bajada: Paradero Rafael Escardó (UPC San Miguel)", desc: "Desciendes justo frente a Hiraoka y cruzas hacia el campus.", kind: "end" }
+          ],
+          timeRange: "20–35 min",
+          baseMinutes: 25,
+          marginPeak: 12,
+          marginValley: 5,
+          fare: "S/ 1.21 (Univ.)",
+          congestion: "Baja",
+          congestionClass: "congestion-baja",
+          note: "Opción más ordenada y económica si cuentas con tu tarjeta Lima Pass o Metropolitano con perfil universitario activo."
+        },
+        alt: {
+          title: "Eje Av. Venezuela / Faucett + conexión en La Marina",
+          lines: [
+            { label: "Buses Av. Venezuela", type: "outline" },
+            { label: "Ruta 1304 / 1315", type: "dark" },
+            { label: "Corredor Rojo 204", type: "red" }
+          ],
+          stops: [
+            { title: "Embarque: Bellavista / Av. Venezuela / Ciudad del Pescador", desc: "Toma buses por Av. Venezuela hasta Faucett o Av. La Marina.", kind: "start" },
+            { title: "Conexión: Cruce Av. Faucett con Av. La Marina", desc: "Transborda al Corredor Rojo 201/204 o rutas 1304/1315 hacia San Miguel.", kind: "transfer" },
+            { title: "Bajada: Paradero Rafael Escardó / Hiraoka", desc: "Ingreso directo al Campus San Miguel en 2 paraderos.", kind: "end" }
+          ],
+          timeRange: "25–42 min",
+          baseMinutes: 30,
+          marginPeak: 15,
+          marginValley: 8,
+          fare: "S/ 1.50 – 2.70",
+          congestion: "Media",
+          congestionClass: "congestion-media",
+          note: "Útil si vives cerca de Av. Venezuela o Av. Colonial y prefieres no caminar hasta Óvalo La Perla."
+        }
+      },
+
+      norte: {
+        id: "norte",
+        code: "EJE 03",
+        color: "#EA580C",
+        shortName: "Lima Norte",
+        fullName: "Lima Norte (Los Olivos / SMP / Independencia)",
+        axisName: "Eje Universitaria / Habich",
+        summary: "Av. Universitaria es la columna vertebral directa hasta San Miguel. En hora punta el cruce de Av. Tomás Valle, Av. Perú y Av. Colonial concentra mayor demora.",
+        fareTip: "Bus directo S/ 2.00–2.50 | Con Metropolitano + Corredor ~S/ 3.00",
+        peakAlert: "Congestión fuerte en Universitaria: 07:00 – 09:00 a. m.",
+        schematicTime: "45–70 min",
+        direct: {
+          title: "Eje Av. Universitaria directo hasta La Marina",
+          lines: [
+            { label: "Ruta IO40", type: "red" },
+            { label: "Rutas 1275 / 1283", type: "dark" },
+            { label: "Ruta IM47", type: "outline" }
+          ],
+          stops: [
+            { title: "Embarque: Av. Universitaria (Izaguirre / Naranjal / Tomás Valle / Habich)", desc: "Aborda buses que recorren toda Universitaria hasta Plaza San Miguel o La Marina.", kind: "start" },
+            { title: "Tramo troncal: Universitaria → San Marcos → Católica → Plaza San Miguel", desc: "Si tu bus termina en Plaza San Miguel, camina 10 min por La Marina o toma 201/204 (2 paraderos).", kind: "mid" },
+            { title: "Bajada: Paradero Rafael Escardó / Av. La Marina", desc: "Las rutas 1275 y IM47 continúan directo por La Marina hasta Escardó/Faucett.", kind: "end" }
+          ],
+          timeRange: "45–70 min",
+          baseMinutes: 50,
+          marginPeak: 22,
+          marginValley: 10,
+          fare: "S/ 2.00 – 2.50",
+          congestion: "Alta",
+          congestionClass: "congestion-alta",
+          note: "Si tomas un bus que solo llega hasta Plaza San Miguel, bajar en Universitaria con La Marina y tomar 3 minutos de Corredor Rojo evita el semáforo lento."
+        },
+        alt: {
+          title: "Metropolitano (Vía Exclusiva) + Conexión Centro/Pershing",
+          lines: [
+            { label: "Metropolitano Expreso", type: "dark" },
+            { label: "Corredor Rojo 201 / 204", type: "red" }
+          ],
+          stops: [
+            { title: "Embarque: Terminal Naranjal / Estación Izaguirre / Tomás Valle", desc: "Usa los servicios Expresos (EX1 / EX2 / EX5) para saltar el tráfico de Caquetá.", kind: "start" },
+            { title: "Conexión: Estación Javier Prado → Paradero Masías (Corredor Rojo)", desc: "Camina al puente Javier Prado y aborda Corredor Rojo 201 o 204 rumbo al Callao.", kind: "transfer" },
+            { title: "Bajada: Paradero Rafael Escardó (UPC San Miguel)", desc: "Trayecto directo por Javier Prado – Pershing – La Marina.", kind: "end" }
+          ],
+          timeRange: "50–65 min",
+          baseMinutes: 52,
+          marginPeak: 15,
+          marginValley: 8,
+          fare: "S/ 1.60 + S/ 1.21*",
+          congestion: "Media",
+          congestionClass: "congestion-media",
+          note: "Aunque recorre más distancia, el tiempo es mucho más predecible los lunes en la mañana cuando Av. Universitaria colapsa."
+        }
+      },
+
+      este: {
+        id: "este",
+        code: "EJE 04",
+        color: "#7C3AED",
+        shortName: "Lima Este",
+        fullName: "Lima Este (SJL / Ate / Santa Anita)",
+        axisName: "Eje Evitamiento / Javier Prado / La Marina",
+        summary: "Combinar tren eléctrico (Línea 1) o vía Evitamiento con el Corredor Rojo en Av. Javier Prado reduce a la mitad el tiempo frente a buses convencionales por el Centro.",
+        fareTip: "Línea 1 + Corredor Rojo = S/ 1.96 aprox. con medio pasaje",
+        peakAlert: "Colas en Estación Bayóvar/Los Jardines: 06:45 – 08:15 a. m.",
+        schematicTime: "45–75 min",
+        direct: {
+          title: "Corredor Rojo 201 directo (Ate / Ceres – Javier Prado – La Marina)",
+          lines: [
+            { label: "Corredor Rojo 201", type: "red" },
+            { label: "Corredor Rojo 204", type: "red" },
+            { label: "Corredor 209 (hasta Univ.)", type: "outline" }
+          ],
+          stops: [
+            { title: "Embarque: Ceres / Puruchuco / Óvalo Santa Anita / Javier Prado Este", desc: "El servicio 201 conecta de extremo a extremo sin trasbordos hasta UPC.", kind: "start" },
+            { title: "Tramo troncal: Toda la Av. Javier Prado → Pershing → Av. La Marina", desc: "Si abordas el 209, baja en Av. Universitaria y conecta 2 paraderos con el 201/204.", kind: "mid" },
+            { title: "Bajada: Paradero Rafael Escardó (UPC San Miguel)", desc: "Paradero oficial del 201 y 204 a 1 minuto de la puerta principal.", kind: "end" }
+          ],
+          timeRange: "55–80 min",
+          baseMinutes: 60,
+          marginPeak: 25,
+          marginValley: 10,
+          fare: "S/ 1.21 (Univ.)",
+          congestion: "Alta",
+          congestionClass: "congestion-alta",
+          note: "Para estudiantes de Ate, Santa Anita y La Molina es la ruta más económica y directa (un solo pasaje)."
+        },
+        alt: {
+          title: "Línea 1 del Metro (SJL) + Corredor Rojo en Estación La Cultura",
+          lines: [
+            { label: "Línea 1 Metro", type: "dark" },
+            { label: "Corredor Rojo 201 / 204", type: "red" }
+          ],
+          stops: [
+            { title: "Embarque: Estaciones SJL (Bayóvar, San Carlos, Los Jardines, Pirámide del Sol)", desc: "Cruzas todo SJL y el río Rímac en vía elevada libre de tráfico vehicular.", kind: "start" },
+            { title: "Conexión: Estación La Cultura (Av. Aviación con Av. Javier Prado)", desc: "Baja de la estación y toma el Corredor Rojo 201 o 204 en el paradero Aviación (30–35 min hasta San Miguel).", kind: "transfer" },
+            { title: "Bajada: Paradero Rafael Escardó (UPC San Miguel)", desc: "Llegada directa frente a Hiraoka sin entrar al Centro de Lima.", kind: "end" }
+          ],
+          timeRange: "45–62 min",
+          baseMinutes: 48,
+          marginPeak: 15,
+          marginValley: 8,
+          fare: "S/ 0.75 + S/ 1.21*",
+          congestion: "Baja",
+          congestionClass: "congestion-baja",
+          note: "La combinación favorita de alumnos de SJL: tiempo estable incluso en hora punta y costo menor a S/ 2.00 con carné universitario."
+        }
+      },
+
+      sur: {
+        id: "sur",
+        code: "EJE 05",
+        color: "#059669",
+        shortName: "Lima Sur",
+        fullName: "Lima Sur (VMT / VES / Chorrillos)",
+        axisName: "Eje Vía Expresa / Javier Prado / La Marina",
+        summary: "Usar la vía exclusiva del Metropolitano (desde Chorrillos) o la Línea 1 (desde VMT/VES) para conectar con el Corredor Rojo te protege de los embotellamientos de la Panamericana Sur.",
+        fareTip: "Metropolitano + Corredor Rojo o Bus Intercampus UPC (Villa–San Miguel)",
+        peakAlert: "Congestión en Javier Prado / Pershing: 07:30 – 09:00 a. m.",
+        schematicTime: "50–75 min",
+        direct: {
+          title: "Metropolitano Vía Expresa + Corredor Rojo (Javier Prado)",
+          lines: [
+            { label: "Metropolitano Expreso", type: "dark" },
+            { label: "Corredor Rojo 201 / 204", type: "red" },
+            { label: "Bus Intercampus UPC*", type: "outline" }
+          ],
+          stops: [
+            { title: "Embarque: Terminal Matellini (Chorrillos) / Alimentadores VES–VMT", desc: "Aborda servicios Expresos por toda la Vía Expresa Paseo de la República.", kind: "start" },
+            { title: "Conexión: Estación Javier Prado → Paradero Masías (Av. Javier Prado)", desc: "Sube al puente peatonal y toma Corredor Rojo 201 o 204 rumbo a San Miguel / Callao.", kind: "transfer" },
+            { title: "Bajada: Paradero Rafael Escardó (UPC San Miguel)", desc: "Llegada directa al frente del campus. (*Revisa horarios del Bus Intercampus desde UPC Villa).", kind: "end" }
+          ],
+          timeRange: "50–68 min",
+          baseMinutes: 55,
+          marginPeak: 18,
+          marginValley: 8,
+          fare: "S/ 1.60 + S/ 1.21*",
+          congestion: "Media",
+          congestionClass: "congestion-media",
+          note: "Si estudias cerca de Campus Villa, consulta en Mi UPC los horarios del Bus Intercampus Ruta 3 (Villa → San Isidro → San Miguel)."
+        },
+        alt: {
+          title: "Línea 1 (VMT/VES) + Corredor Rojo o Buses 1304 / 1315",
+          lines: [
+            { label: "Línea 1 Metro", type: "dark" },
+            { label: "Corredor Rojo 201 / 204", type: "red" },
+            { label: "Rutas 1304 / 1315", type: "outline" }
+          ],
+          stops: [
+            { title: "Embarque: Estación Villa El Salvador / Parque Industrial / María Auxiliadora", desc: "El tren evita por completo el tráfico de Av. Pachacútec y Panamericana Sur.", kind: "start" },
+            { title: "Conexión: Estación La Cultura (Av. Javier Prado)", desc: "Toma Corredor Rojo 201 o 204 directo hasta San Miguel. (Alternativa directa: buses 1304/1315 desde José Gálvez).", kind: "transfer" },
+            { title: "Bajada: Paradero Rafael Escardó (UPC San Miguel)", desc: "Bajada frente a Hiraoka.", kind: "end" }
+          ],
+          timeRange: "55–78 min",
+          baseMinutes: 62,
+          marginPeak: 20,
+          marginValley: 10,
+          fare: "S/ 0.75 + S/ 1.21*",
+          congestion: "Media",
+          congestionClass: "congestion-media",
+          note: "Los buses directos 1304/1315 desde VMT/Pachacámac no requieren trasbordo, pero pueden demorar +90 min en hora punta."
+        }
+      }
+    };
+
+    const ZONE_ORDER = ["ventanilla", "callao", "norte", "este", "sur"];
+
+    // ================= CONSEJOS INICIALES DE ESTUDIANTES =================
+    const DEFAULT_TIPS = [
+      {
+        name: "Mateo V.",
+        career: "Ing. de Sistemas · 7° ciclo",
+        zone: "Lima Este",
+        category: "Ahorro / Conexión",
+        text: "Desde SJL nunca tomo micro por Abancay. Voy en la Línea 1 hasta Estación La Cultura y ahí agarro el Corredor Rojo 201 o 204: en 35 minutos estoy frente a Hiraoka gastando menos de 2 soles con medio pasaje."
+      },
+      {
+        name: "Valeria G.",
+        career: "Arquitectura · 5° ciclo",
+        zone: "Ventanilla / Pachacútec",
+        category: "Paradero Clave",
+        text: "En las mañanas, si la 1442 pasa muy llena por Metro Ventanilla, subo a cualquier bus que baje por Faucett, me bajo en el cruce con La Marina y tomo el Corredor 201 que viene casi vacío desde La Perla."
+      },
+      {
+        name: "Diego T.",
+        career: "Administración y Marketing · 4° ciclo",
+        zone: "Lima Norte",
+        category: "Día de Examen",
+        text: "Los días de parcial a las 8:00 a. m. evito Av. Universitaria porque en Tomás Valle se traba todo. Tomo el Expreso del Metropolitano hasta Javier Prado y conecto con el Corredor Rojo; prefiero hacer trasbordo seguro que llegar tarde."
+      },
+      {
+        name: "Luciana M.",
+        career: "Psicología · 6° ciclo",
+        zone: "Callao / La Perla",
+        category: "Horario Menos Cargado",
+        text: "El paradero exacto para nuestro campus en el Corredor Rojo es 'Rafael Escardó', no 'Parque de las Leyendas'. Te ahorras caminar 4 cuadras con maquetas o mochila pesada."
+      },
+      {
+        name: "Sebastián P.",
+        career: "Comunicación Audiovisual · 8° ciclo",
+        zone: "Lima Sur",
+        category: "Ahorro / Conexión",
+        text: "Si tienes clases en la tarde o vives cerca de Chorrillos, revisa los horarios del Bus Intercampus UPC (Villa – San Isidro – San Miguel). Es gratuito para alumnos, seguro y con aire acondicionado."
+      },
+      {
+        name: "Andrea Q.",
+        career: "Nutrición y Dietética · 3° ciclo",
+        zone: "Campus San Miguel",
+        category: "Día de Examen",
+        text: "Ten siempre recargada tu tarjeta Lima Pass o del Metropolitano la noche anterior desde Yape/Plin (validando en tótem si es necesario) para no perder el bus haciendo cola en la recarga."
+      }
+    ];
+
+    // ================= ESTADO GLOBAL =================
+    let currentZoneId = "ventanilla";
+    const STORAGE_KEY = "upc_san_miguel_student_tips_v1";
+
+    // ================= INICIALIZACIÓN =================
+    document.addEventListener("DOMContentLoaded", () => {
+      renderSchematic();
+      renderZoneTabs();
+      selectZone("ventanilla", false);
+      initCalculatorEvents();
+      loadAndRenderTips();
+      initTipForm();
+      initPosterAndQR();
+    });
+
+    // ================= ESQUEMA EN HERO =================
+    function renderSchematic() {
+      const list = document.getElementById("schematicList");
+      list.innerHTML = ZONE_ORDER.map(id => {
+        const z = ZONES_DATA[id];
+        return `
+          <button type="button" class="trunk-node ${id === currentZoneId ? "active" : ""}" data-zone="${id}">
+            <div class="trunk-left">
+              <span class="trunk-code" style="background: ${z.color};">${z.code}</span>
+              <div class="trunk-info">
+                <strong>${z.shortName}</strong>
+                <small>${z.axisName}</small>
+              </div>
+            </div>
+            <span class="trunk-time">${z.schematicTime}</span>
+          </button>
+        `;
+      }).join("");
+
+      list.querySelectorAll(".trunk-node").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const zId = btn.dataset.zone;
+          selectZone(zId, true);
+        });
+      });
+    }
+
+    // ================= PESTAÑAS DE ZONA Y RUTAS =================
+    function renderZoneTabs() {
+      const tabsEl = document.getElementById("zoneTabs");
+      tabsEl.innerHTML = ZONE_ORDER.map(id => {
+        const z = ZONES_DATA[id];
+        return `
+          <button type="button" class="zone-tab ${id === currentZoneId ? "active" : ""}" role="tab" aria-selected="${id === currentZoneId}" data-zone="${id}">
+            <div class="zone-tab-top">
+              <span class="axis-pill">
+                <span class="axis-dot" style="background:${z.color};"></span>
+                ${z.code}
+              </span>
+            </div>
+            <div class="zone-tab-title">${z.shortName}</div>
+            <div class="zone-tab-sub">${z.axisName}</div>
+          </button>
+        `;
+      }).join("");
+
+      tabsEl.querySelectorAll(".zone-tab").forEach(tab => {
+        tab.addEventListener("click", () => selectZone(tab.dataset.zone, false));
+      });
+    }
+
+    function selectZone(zoneId, shouldScrollToZones = false) {
+      currentZoneId = zoneId;
+
+      // Sincronizar Hero select, esquema, tabs y calculadora
+      document.getElementById("heroZoneSelect").value = zoneId;
+      document.getElementById("calcZone").value = zoneId;
+
+      document.querySelectorAll(".trunk-node").forEach(n => {
+        n.classList.toggle("active", n.dataset.zone === zoneId);
+      });
+
+      document.querySelectorAll(".zone-tab").forEach(t => {
+        const isActive = t.dataset.zone === zoneId;
+        t.classList.toggle("active", isActive);
+        t.setAttribute("aria-selected", isActive ? "true" : "false");
+      });
+
+      renderZoneDetails(zoneId);
+      updateCalculator();
+
+      if (shouldScrollToZones) {
+        document.getElementById("zonas").scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+
+    function renderZoneDetails(zoneId) {
+      const z = ZONES_DATA[zoneId];
+
+      // Banner
+      const banner = document.getElementById("zoneBanner");
+      banner.style.borderLeftColor = z.color;
+      banner.innerHTML = `
+        <div class="zone-banner-info">
+          <h3>${z.fullName} — ${z.axisName}</h3>
+          <p>${z.summary}</p>
+        </div>
+        <div class="zone-banner-badges">
+          <span class="meta-chip">⏱ ${z.peakAlert}</span>
+          <span class="meta-chip">💳 ${z.fareTip}</span>
+        </div>
+      `;
+
+      // Tarjetas comparativas
+      const container = document.getElementById("routesComparison");
+      container.innerHTML = [
+        buildRouteCard(z.direct, "direct", z.id),
+        buildRouteCard(z.alt, "alt", z.id)
+      ].join("");
+
+      container.querySelectorAll("[data-use-calc]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const rType = btn.dataset.useCalc;
+          document.getElementById("calcZone").value = z.id;
+          const radio = document.querySelector(`input[name="calcRouteType"][value="${rType}"]`);
+          if (radio) radio.checked = true;
+          updateCalculator();
+          document.getElementById("calculadora").scrollIntoView({ behavior: "smooth" });
+        });
+      });
+    }
+
+    function buildRouteCard(route, type, zoneId) {
+      const isDirect = type === "direct";
+      const badgeText = isDirect ? "⚡ Ruta Más Rápida / Directa" : "🔄 Ruta Alternativa con Conexión";
+
+      const linesHTML = route.lines.map(l => {
+        const cls = l.type === "red" ? "line-tag red" : l.type === "outline" ? "line-tag outline" : "line-tag";
+        return `<span class="${cls}">${l.label}</span>`;
+      }).join("");
+
+      const stopsHTML = route.stops.map(s => `
+        <div class="stop-item ${s.kind}">
+          <div class="stop-marker">
+            <span class="stop-dot"></span>
+            <span class="stop-line"></span>
+          </div>
+          <div class="stop-content">
+            <strong>${s.title}</strong>
+            <span>${s.desc}</span>
+          </div>
+        </div>
+      `).join("");
+
+      return `
+        <article class="route-card ${isDirect ? "primary-route" : "alt-route"}">
+          <div>
+            <div class="route-card-header">
+              <span class="route-type-badge ${isDirect ? "fast" : "alt"}">${badgeText}</span>
+              <span class="congestion-badge ${route.congestionClass}">
+                Congestión: ${route.congestion}
+              </span>
+            </div>
+
+            <h4 class="route-title">${route.title}</h4>
+            <div class="lines-row">${linesHTML}</div>
+
+            <div class="stops-timeline" aria-label="Paraderos principales">
+              ${stopsHTML}
+            </div>
+
+            <div class="route-metrics">
+              <div class="metric-box">
+                <small>Tiempo est.</small>
+                <strong>${route.timeRange}</strong>
+              </div>
+              <div class="metric-box">
+                <small>Margen punta</small>
+                <strong>+${route.marginPeak} min</strong>
+              </div>
+              <div class="metric-box">
+                <small>Tarifa ref.</small>
+                <strong>${route.fare}</strong>
+              </div>
+            </div>
+
+            <p class="route-note"><strong>Nota clave:</strong> ${route.note}</p>
+          </div>
+
+          <button type="button" class="btn ${isDirect ? "btn-primary" : "btn-outline"}" style="width: 100%;" data-use-calc="${type}">
+            Calcular hora de salida con esta ruta →
+          </button>
+        </article>
+      `;
+    }
+
+    // Botón Hero
+    document.getElementById("heroGoBtn").addEventListener("click", () => {
+      const selected = document.getElementById("heroZoneSelect").value;
+      selectZone(selected, true);
+    });
+
+    document.getElementById("heroZoneSelect").addEventListener("change", (e) => {
+      selectZone(e.target.value, false);
+    });
+
+    // ================= CALCULADORA HORA REAL DE SALIDA =================
+    function initCalculatorEvents() {
+      const calcZone = document.getElementById("calcZone");
+      const calcTime = document.getElementById("calcTime");
+      const calcCondition = document.getElementById("calcCondition");
+      const radios = document.querySelectorAll('input[name="calcRouteType"]');
+      const chips = document.querySelectorAll(".time-chip");
+
+      calcZone.addEventListener("change", () => {
+        selectZone(calcZone.value, false);
+      });
+
+      calcTime.addEventListener("input", () => {
+        chips.forEach(c => c.classList.toggle("active", c.dataset.time === calcTime.value));
+        updateCalculator();
+      });
+
+      calcCondition.addEventListener("change", updateCalculator);
+      radios.forEach(r => r.addEventListener("change", updateCalculator));
+
+      chips.forEach(chip => {
+        chip.addEventListener("click", () => {
+          calcTime.value = chip.dataset.time;
+          chips.forEach(c => c.classList.remove("active"));
+          chip.classList.add("active");
+          updateCalculator();
+        });
+      });
+
+      updateCalculator();
+    }
+
+    function updateCalculator() {
+      const zoneId = document.getElementById("calcZone").value;
+      const routeType = document.querySelector('input[name="calcRouteType"]:checked').value;
+      const classTimeStr = document.getElementById("calcTime").value || "08:00";
+      const extraConditionMin = parseInt(document.getElementById("calcCondition").value, 10) || 0;
+
+      const z = ZONES_DATA[zoneId];
+      const route = z[routeType];
+
+      const [hh, mm] = classTimeStr.split(":").map(Number);
+      const classTotalMinutes = hh * 60 + mm;
+
+      // Determinar si la hora de viaje coincide con hora punta en Lima
+      // Mañana: 06:30 a 09:15 | Noche: 17:30 a 20:30
+      const estimatedTravelStart = classTotalMinutes - (route.baseMinutes + 20);
+      const isMorningPeak = (classTotalMinutes >= 420 && classTotalMinutes <= 570) || (estimatedTravelStart >= 380 && estimatedTravelStart <= 540);
+      const isEveningPeak = (classTotalMinutes >= 1080 && classTotalMinutes <= 1230);
+      const isPeak = isMorningPeak || isEveningPeak;
+
+      const trafficMargin = (isPeak ? route.marginPeak : route.marginValley) + extraConditionMin;
+      const campusBuffer = 10; // Caminata desde paradero + ingreso al aula
+      const totalAnticipation = route.baseMinutes + trafficMargin + campusBuffer;
+
+      let leaveMinutes = classTotalMinutes - totalAnticipation;
+      let prevDayLabel = "";
+      if (leaveMinutes < 0) {
+        leaveMinutes += 1440;
+        prevDayLabel = " (madrugada)";
+      }
+
+      const arrivalCampusMinutes = (classTotalMinutes - campusBuffer + 1440) % 1440;
+
+      document.getElementById("departureClock").textContent = format12h(leaveMinutes) + prevDayLabel;
+      document.getElementById("departureSummary").textContent =
+        `Anticipación total: ${totalAnticipation} min · Llegarías aprox. a las ${format12h(arrivalCampusMinutes)} al paradero Rafael Escardó.`;
+
+      // Status pill
+      const statusBadge = document.getElementById("boardStatusBadge");
+      if (isPeak) {
+        statusBadge.textContent = "FRANJA HORA PUNTA";
+        statusBadge.style.background = "rgba(239, 68, 68, 0.25)";
+        statusBadge.style.color = "#FCA5A5";
+        statusBadge.style.border = "1px solid rgba(239, 68, 68, 0.5)";
+      } else {
+        statusBadge.textContent = "TRÁFICO MODERADO / VALLE";
+        statusBadge.style.background = "rgba(16, 185, 129, 0.22)";
+        statusBadge.style.color = "#6EE7B7";
+        statusBadge.style.border = "1px solid rgba(16, 185, 129, 0.45)";
+      }
+
+      // Barras proporcionales
+      const pBase = Math.round((route.baseMinutes / totalAnticipation) * 100);
+      const pMargin = Math.round((trafficMargin / totalAnticipation) * 100);
+      const pCampus = Math.max(5, 100 - pBase - pMargin);
+
+      document.getElementById("barBase").style.width = `${pBase}%`;
+      document.getElementById("barMargin").style.width = `${pMargin}%`;
+      document.getElementById("barCampus").style.width = `${pCampus}%`;
+
+      document.getElementById("legendBase").textContent = `${route.baseMinutes} min`;
+      document.getElementById("legendMargin").textContent = `${trafficMargin} min`;
+      document.getElementById("legendCampus").textContent = `${campusBuffer} min`;
+
+      // Recomendación contextual
+      const firstLine = route.lines[0].label;
+      document.getElementById("boardTip").innerHTML =
+        `<strong>Ruta elegida (${z.shortName}):</strong> ${route.title} (${firstLine}). ${extraConditionMin >= 15 ? "Por día de examen incluimos +15 min extra de seguridad." : "Verifica tu saldo de tarjeta Lima Pass/Metropolitano antes de salir."}`;
+    }
+
+    function format12h(totalMin) {
+      const m = ((totalMin % 1440) + 1440) % 1440;
+      const h24 = Math.floor(m / 60);
+      const min = m % 60;
+      const suffix = h24 >= 12 ? "p. m." : "a. m.";
+      let h12 = h24 % 12;
+      if (h12 === 0) h12 = 12;
+      return `${String(h12).padStart(2, "0")}:${String(min).padStart(2, "0")} ${suffix}`;
+    }
+
+    // ================= CONSEJOS DE ESTUDIANTES =================
+    function loadAndRenderTips() {
+      let savedTips = [];
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) savedTips = JSON.parse(raw);
+      } catch (e) {
+        savedTips = [];
+      }
+
+      const allTips = [...savedTips, ...DEFAULT_TIPS];
+      const grid = document.getElementById("tipsGrid");
+
+      grid.innerHTML = allTips.map(tip => {
+        const initials = tip.name.trim().split(" ").slice(0, 2).map(w => w[0]?.toUpperCase() || "").join("");
+        const parts = tip.name.split("·");
+        const authorName = parts[0]?.trim() || tip.name;
+        const authorCareer = parts[1]?.trim() || "Estudiante UPC San Miguel";
+
+        return `
+          <article class="tip-card">
+            <div>
+              <div class="tip-card-head">
+                <span class="tip-category">${escapeHTML(tip.category)}</span>
+                <span class="tip-zone-tag">${escapeHTML(tip.zone)}</span>
+              </div>
+              <p class="tip-text" style="margin-top: 10px;">“${escapeHTML(tip.text)}”</p>
+            </div>
+            <div class="tip-author">
+              <div class="avatar">${escapeHTML(initials || "U")}</div>
+              <div>
+                <strong>${escapeHTML(authorName)}</strong>
+                <span>${escapeHTML(authorCareer)}</span>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function initTipForm() {
+      const form = document.getElementById("tipForm");
+      const toast = document.getElementById("tipToast");
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const name = document.getElementById("tipName").value.trim();
+        const zone = document.getElementById("tipZone").value;
+        const category = document.getElementById("tipCategory").value;
+        const text = document.getElementById("tipContent").value.trim();
+
+        if (!name || !text) return;
+
+        const newTip = { name, zone, category, text };
+        try {
+          const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+          existing.unshift(newTip);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(existing.slice(0, 12)));
+        } catch (err) {
+          // Si localStorage está bloqueado, igual se renderiza en sesión
+        }
+
+        loadAndRenderTips();
+        form.reset();
+        toast.classList.add("show");
+        setTimeout(() => toast.classList.remove("show"), 4000);
+      });
+    }
+
+    function escapeHTML(str) {
+      return String(str).replace(/[&<>"']/g, m => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      }[m]));
+    }
+
+    // ================= CÓDIGO QR Y AFICHE DESCARGABLE =================
+    let qrDataUrl = "";
+
+    function initPosterAndQR() {
+      const targetUrl = window.location.href.startsWith("http")
+        ? window.location.href
+        : "https://upc.edu.pe/campus-san-miguel-rutas";
+
+      generateQRGraphic(targetUrl);
+
+      const modal = document.getElementById("posterModal");
+      document.getElementById("openPosterModalBtn").addEventListener("click", () => modal.classList.add("open"));
+      document.getElementById("closePosterModalBtn").addEventListener("click", () => modal.classList.remove("open"));
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) modal.classList.remove("open");
+      });
+
+      document.getElementById("downloadPosterBtn").addEventListener("click", downloadPosterPNG);
+      document.getElementById("modalDownloadBtn").addEventListener("click", downloadPosterPNG);
+      document.getElementById("modalPrintBtn").addEventListener("click", () => window.print());
+    }
+
+    function generateQRGraphic(text) {
+      const miniHolder = document.getElementById("qrMiniHolder");
+      const modalHolder = document.getElementById("qrModalHolder");
+
+      // Intenta usar qrcode-generator si cargó correctamente
+      setTimeout(() => {
+        if (typeof window.qrcode === "function") {
+          const qr = window.qrcode(0, "M");
+          qr.addData(text);
+          qr.make();
+          qrDataUrl = qr.createDataURL(6, 2);
+          miniHolder.innerHTML = `<img src="${qrDataUrl}" alt="Código QR de la guía" />`;
+          modalHolder.innerHTML = `<img src="${qrDataUrl}" alt="Código QR de la guía" />`;
+        } else {
+          // Fallback SVG vectorial de alta nitidez si está sin internet
+          const fallbackSVG = `
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="QR Guía UPC">
+              <rect width="100" height="100" fill="#ffffff"/>
+              <path d="M8 8h26v26H8zM13 13v16h16V13zM17 17h8v8h-8zM66 8h26v26H66zM71 13v16h16V13zM75 17h8v8h-8zM8 66h26v26H8zM13 71v16h16V71zM17 75h8v8h-8z" fill="#0F172A"/>
+              <path d="M40 10h6v6h-6zM50 10h8v6h-8zM42 20h10v6H42zM40 30h6v10h-6zM52 28h8v8h-8zM10 42h8v6h-8zM24 42h12v8H24zM44 44h14v14H44zM66 42h8v8h-8zM80 42h10v6H80zM14 54h14v6H14zM66 56h12v6H66zM84 54h6v12h-6zM42 66h10v8H42zM58 68h14v8H58zM78 70h12v10H78zM42 82h14v8H42zM64 84h10v8H64z" fill="#0F172A"/>
+              <rect x="46" y="46" width="8" height="8" fill="#D91E2A"/>
+            </svg>`;
+          miniHolder.innerHTML = fallbackSVG;
+          modalHolder.innerHTML = fallbackSVG;
+        }
+      }, 250);
+    }
+
+    function downloadPosterPNG() {
+      const canvas = document.getElementById("posterCanvas");
+      const ctx = canvas.getContext("2d");
+      const W = canvas.width;
+      const H = canvas.height;
+
+      // Fondo blanco
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillRect(0, 0, W, H);
+
+      // Cabecera roja UPC
+      ctx.fillStyle = "#D91E2A";
+      ctx.fillRect(0, 0, W, 390);
+
+      // Franja oscura superior
+      ctx.fillStyle = "#0F172A";
+      ctx.fillRect(0, 0, W, 68);
+
+      ctx.fillStyle = "#FFFFFF";
+      ctx.font = "bold 24px Inter, sans-serif";
+      ctx.fillText("APRENDIZAJE ESTRATÉGICO Y LIDERAZGO · UPC SAN MIGUEL", 64, 43);
+
+      // Título principal
+      ctx.font = "800 72px Inter, sans-serif";
+      ctx.fillText("Planifica tu Ruta,", 64, 175);
+      ctx.fillText("Protege tu Tiempo", 64, 260);
+
+      ctx.font = "500 30px Inter, sans-serif";
+      ctx.fillStyle = "rgba(255,255,255,0.92)";
+      ctx.fillText("Guía rápida de transporte público hacia UPC Sede San Miguel", 64, 332);
+
+      // Sección 5 ejes troncales
+      ctx.fillStyle = "#0F172A";
+      ctx.font = "800 34px Inter, sans-serif";
+      ctx.fillText("EJES Y CORREDORES HACIA PARADERO RAFAEL ESCARDÓ", 64, 470);
+
+      const axes = [
+        { code: "EJE 01", name: "Ventanilla / Mi Perú / Pachacútec", sub: "Gambetta – Faucett – La Marina (1442 / Corredor 201)", color: "#0891B2" },
+        { code: "EJE 02", name: "Callao / Bellavista / La Perla", sub: "Óvalo La Perla – Corredor Rojo 201 directo (S/ 1.21 Univ.)", color: "#2563EB" },
+        { code: "EJE 03", name: "Lima Norte (Los Olivos / SMP / Indep.)", sub: "Av. Universitaria (IO40 / 1275) o Metropolitano + Corredor", color: "#EA580C" },
+        { code: "EJE 04", name: "Lima Este (SJL / Ate / Santa Anita)", sub: "Línea 1 Metro (Est. La Cultura) + Corredor Rojo 201 / 204", color: "#7C3AED" },
+        { code: "EJE 05", name: "Lima Sur (VMT / VES / Chorrillos)", sub: "Metropolitano (Est. Javier Prado) + Corredor Rojo / Bus UPC", color: "#059669" }
+      ];
+
+      let y = 520;
+      axes.forEach(ax => {
+        ctx.fillStyle = "#F8FAFC";
+        ctx.strokeStyle = "#CBD5E1";
+        ctx.lineWidth = 2;
+        roundRect(ctx, 64, y, W - 128, 108, 16, true, true);
+
+        ctx.fillStyle = ax.color;
+        roundRect(ctx, 88, y + 26, 118, 56, 10, true, false);
+
+        ctx.fillStyle = "#FFFFFF";
+        ctx.font = "bold 24px monospace";
+        ctx.fillText(ax.code, 102, y + 63);
+
+        ctx.fillStyle = "#0F172A";
+        ctx.font = "bold 28px Inter, sans-serif";
+        ctx.fillText(ax.name, 230, y + 48);
+
+        ctx.fillStyle = "#475569";
+        ctx.font = "500 22px Inter, sans-serif";
+        ctx.fillText(ax.sub, 230, y + 84);
+
+        y += 128;
+      });
+
+      // Bloque QR inferior
+      ctx.fillStyle = "#0F172A";
+      roundRect(ctx, 64, 1190, W - 128, 250, 22, true, false);
+
+      ctx.fillStyle = "#FFFFFF";
+      ctx.font = "800 36px Inter, sans-serif";
+      ctx.fillText("Escanea el QR y calcula", 104, 1275);
+      ctx.fillText("tu hora real de salida", 104, 1322);
+
+      ctx.fillStyle = "#CBD5E1";
+      ctx.font = "500 23px Inter, sans-serif";
+      ctx.fillText("Proyecto de Sostenibilidad · Menos tardanzas y menos estrés", 104, 1378);
+      ctx.fillStyle = "#FCA5A5";
+      ctx.font = "bold 23px Inter, sans-serif";
+      ctx.fillText("Bajada directa: Paradero Rafael Escardó (Frente a Hiraoka)", 104, 1412);
+
+      // Caja blanca del QR
+      ctx.fillStyle = "#FFFFFF";
+      roundRect(ctx, W - 290, 1215, 200, 200, 14, true, false);
+
+      const triggerDownload = () => {
+        const link = document.createElement("a");
+        link.download = "Afiche-Rutas-UPC-San-Miguel.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      };
+
+      if (qrDataUrl) {
+        const img = new Image();
+        img.onload = () => {
+          ctx.drawImage(img, W - 278, 1227, 176, 176);
+          triggerDownload();
+        };
+        img.src = qrDataUrl;
+      } else {
+        ctx.fillStyle = "#0F172A";
+        ctx.font = "bold 24px monospace";
+        ctx.fillText("QR GUÍA UPC", W - 262, 1322);
+        triggerDownload();
+      }
+    }
+
+    function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.lineTo(x + width - radius, y);
+      ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+      ctx.lineTo(x + width, y + height - radius);
+      ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+      ctx.lineTo(x + radius, y + height);
+      ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+      ctx.lineTo(x, y + radius);
+      ctx.quadraticCurveTo(x, y, x + radius, y);
+      ctx.closePath();
+      if (fill) ctx.fill();
+      if (stroke) ctx.stroke();
+    }
+  </script>
+</body>
+</html>
